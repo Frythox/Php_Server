@@ -1,0 +1,39 @@
+name: Php_Server
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./www/data:/web:ro
+      - ./nginx.conf:/etc/nginx/templates/default.conf.template:ro
+    environment:
+      - PROJECT_FOLDER=${PROJECT_FOLDER}
+    depends_on:
+      - php
+
+  php:
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+      args:
+        PHP_VERSION: ${PHP_VERSION:-8.5}
+    working_dir: /web
+    volumes:
+      - ./www/data:/web
+      - ./php/banner/banner.txt:/root/banner.txt:ro
+    depends_on:
+      - mariadb
+
+  mariadb:
+    image: mariadb:${MARIADB_VERSION:-lts}
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 1
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_DATABASE: ${DATABASE:-project_db}
+    volumes:
+      - mariadb_storage:/var/lib/mysql
+
+volumes:
+  mariadb_storage:

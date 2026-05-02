@@ -1,0 +1,10 @@
+# Choose the php version
+PHP_VERSION=8.5
+
+# MariaDB parameters
+MARIADB_VERSION=lts
+DB_USER=db_user
+DB_PASSWORD=password
+
+# Web emplacement (if you use ci4 put /public next to the folder name)
+PROJECT_FOLDER=site
