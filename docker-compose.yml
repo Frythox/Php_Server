@@ -5,11 +5,13 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./www/data:/web:ro
-      - ./nginx.conf:/etc/nginx/templates/default.conf.template:ro
+      - ./www/data:/web:ro,z
+      - ./nginx.conf:/etc/nginx/templates/default.conf.template:ro,z
     environment:
       - PROJECT_FOLDER=${PROJECT_FOLDER}
     depends_on:
+      - php
+    networks:
       - php
 
   php:
@@ -20,10 +22,13 @@ services:
         PHP_VERSION: ${PHP_VERSION:-8.5}
     working_dir: /web
     volumes:
-      - ./www/data:/web
-      - ./php/banner/banner.txt:/root/banner.txt:ro
+      - ./www/data:/web:z
+      - ./php/banner/banner.txt:/root/banner.txt:ro,z
     depends_on:
       - mariadb
+    networks:
+      - php
+      - database
 
   mariadb:
     image: mariadb:${MARIADB_VERSION:-lts}
@@ -33,7 +38,14 @@ services:
       MARIADB_PASSWORD: ${DB_PASSWORD}
       MARIADB_DATABASE: ${DATABASE:-project_db}
     volumes:
-      - mariadb_storage:/var/lib/mysql
+      - mariadb_storage:/var/lib/mysql:z
+    networks:
+      - database
 
 volumes:
   mariadb_storage:
+
+networks:
+  php:
+  database: 
+    internal: true

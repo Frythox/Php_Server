@@ -5,6 +5,7 @@ PHP_VERSION=8.5
 MARIADB_VERSION=lts
 DB_USER=db_user
 DB_PASSWORD=password
+DATABASE=project_db
 
-# Web emplacement (if you use ci4 put /public next to the folder name)
+# Web folder name
 PROJECT_FOLDER=site
